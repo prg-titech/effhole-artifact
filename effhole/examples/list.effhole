@@ -1,0 +1,13 @@
+
+{
+  val fix = \f. (\x . f (\v. x (x) (v))) (\x. f (\v. x (x) (v)));
+  val length = fix (\length. \xs. xs match {
+                                 [] => 0;
+                                 x :: xs => 1 + length(xs)
+                               });
+  val map = fix (\map. \f. \xs. xs match {
+                          [] => [];
+                          x :: xs => f(x) :: map(f)(xs) });
+  val test = 1 :: 2 :: [];
+  (map (\x. x * 2) (test), length(test))
+}

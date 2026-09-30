@@ -1,0 +1,11 @@
+with handler {
+  x => (x, 0);
+  log(a, k) => k (()) match { (x, acc) => (x, acc + a) }
+}
+handle { 
+  #log(?);
+  #log(?);
+  True
+}
+
+// ? + 1

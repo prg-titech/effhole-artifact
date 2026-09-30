@@ -1,0 +1,6 @@
+{
+  "effhole.runMode": "eval",
+  // "effhole.runMode": "norm",
+  "effhole.step": false,
+  "effhole.fuel": 2000
+}

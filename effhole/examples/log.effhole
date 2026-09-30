@@ -1,0 +1,11 @@
+with handler {
+  x => (x, "");
+  log(a, k) => k(()) match { (x, acc) => (x, a ^ acc) }
+}
+handle { 
+  #log(?);
+  #log(", world");
+  True
+}
+
+// ? + 1

@@ -1,0 +1,83 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "EffHole",
+  "scopeName": "source.effhole",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#keywords" },
+    { "include": "#booleans" },
+    { "include": "#constructors" },
+    { "include": "#holes" },
+    { "include": "#opcalls" },
+    { "include": "#operators" },
+    { "include": "#identifiers" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.block.effhole",
+          "begin": "/\\*",
+          "end": "\\*/"
+        },
+        {
+          "name": "comment.line.effhole",
+          "match": "//.*$"
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.effhole",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.effhole",
+          "match": "\\\\(\\\\|\"|n|r|t|b|f|v|0|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|u\\{[0-9a-fA-F]+\\})"
+        }
+      ]
+    },
+    "numbers": {
+      "name": "constant.numeric.decimal.effhole",
+      "match": "\\b[0-9]+\\b"
+    },
+    "keywords": {
+      "name": "keyword.control.effhole",
+      "match": "\\b(handler|do|match|with|handle|if|then|else|def|val)\\b"
+    },
+    "booleans": {
+      "name": "constant.language.boolean.effhole",
+      "match": "\\b(True|False)\\b"
+    },
+    "constructors": {
+      "name": "entity.name.type.constructor.effhole",
+      "match": "\\b(inl|inr)\\b|::|\\[\\]"
+    },
+    "holes": {
+      "patterns": [
+        {
+          "name": "keyword.other.important.effhole",
+          "match": "(?<!\\w)\\?(?:[0-9]+)?(?!\\w)"
+        },
+        {
+          "name": "keyword.other.important.effhole",
+          "match": "#\\?[0-9]+"
+        }
+      ]
+    },
+    "opcalls": {
+      "name": "support.function.effhole",
+      "match": "#[a-zA-Z][a-zA-Z0-9]*"
+    },
+    "operators": {
+      "name": "keyword.operator.effhole",
+      "match": "(==|/=|<=|>=|<-|->|\\+|\\-|\\*|/|\\^|<|>|=)"
+    },
+    "identifiers": {
+      "name": "variable.other.effhole",
+      "match": "\\b[a-zA-Z][a-zA-Z0-9]*\\b|\\$"
+    }
+  }
+}

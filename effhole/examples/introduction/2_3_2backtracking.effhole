@@ -1,0 +1,23 @@
+{
+
+  // choose from m to n
+  def chooseInt(m)(n) = 
+    if m > n then #fail(()) 
+    else (if #decide(()) then m else chooseInt(m + 1)(n));
+
+  val sum5 = \m n.  {
+      val a = chooseInt(m)(n - 1);
+      val b = chooseInt(a + 1)(n);
+      if a + b == 5 then (a, b) else #fail(())   
+    };
+
+  val backtrack = handler { 
+                x => x; 
+                decide(x, k) => 
+                  with handler { x => x; fail(x, k2) => k(False) }
+                  handle { k(True) }
+              };
+
+  with backtrack handle { sum5(1)(10) }
+  
+}

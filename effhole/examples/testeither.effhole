@@ -1,0 +1,4 @@
+\x. (inr 1) match {
+  inl x => x + 1;
+  inr x => x + 2
+}

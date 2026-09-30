@@ -1,0 +1,35 @@
+with handler {
+  x -> (x, []);
+  tell(s, k) -> case k () { (x, acc) -> (x, s :: acc) }
+} handle {
+do {
+
+  handleBreak <- handler { 
+                   x -> x; 
+                   break(x, k) -> ();
+                   breakn(n, k) -> if n == 1 then () else breakn(n - 1)
+                 };
+
+  handleContinue <- handler {
+                      x -> x;
+                      continue(x, k) -> ()
+                    };
+
+  letrec for i j c = with handleBreak handle {
+    if i <= j then do {
+      with handleContinue handle { c i };
+      for (i+1) j c
+    } else ()
+  };
+  
+  for 1 5 (\i.
+    for 1 5 (\j. 
+      for i 5 (\k. do {
+        tell((i, (j, k)));
+        breakn(2)
+      })
+    )
+  )
+
+}
+}

@@ -1,0 +1,66 @@
+// example of https://github.com/ocaml-multicore/ocaml-effects-tutorial
+
+// using writer effect for printing output
+with handler {
+  x => (x, []);
+  tell(s, k) => k (()) match { (x, acc) => (x, s :: acc) }
+} handle {
+
+{
+  // xchg : int => int
+
+  // task status is represented as:
+  // data Status = Done | Paused Int (Int => Status)
+
+  // Done = inr ()
+  // Paused = inl (1, \s. inr ())
+  // Paused = inl (1, \s. inl (2, inr ()))
+  // ...
+  val done = inr ();
+  val paused = \m k. inl (m, k);
+
+  // We define a step function that runs the function f for one step with argument v
+  val step = \f v. with handler { 
+                    x => done;
+                    xchg(m, k) => paused(m)(k)
+                  } handle { f(v) };
+  
+  // The task may perform an Xchg in which case we return its Paused state. 
+  // We now define a run_both function for running two tasks concurrently.
+  def runboth(a)(b) = 
+    // run a
+    a(()) match {
+      // a is done, run b
+      inr unit => b (()) match {
+        // b is also done, return
+        inr unit => ();
+        // b is still running? fail!
+        inl p => fail("improper synchronization")
+      };
+      // a is paused, run b
+      inl p => p match {
+        (v1, k1) => b (()) match {
+          // b is done, fail!
+          inr unit => fail("improper synchronization");
+          // b is also paused
+          inl p => p match {
+            (v2, k2) => runboth (\unit . k1(v2)) (\unit . k2(v1))
+          }
+        }
+      }
+    };
+
+  // a test program
+  def f(name)(n) = 
+    if n == 0 then ()
+    else {
+      #tell((name ^ ": sending!", n));
+      val v = #xchg(n);
+      #tell((name ^ ": received!", v));
+      f(name)(n - 1)
+    };
+
+  runboth(step(f("a"))(3))(step(f("b"))(3))
+// end of program
+}
+}

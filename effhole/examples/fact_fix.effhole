@@ -1,0 +1,5 @@
+{
+  val fix = \f. (\x . f (\v. x (x) (v))) (\x. f (\v. x (x) (v)));
+  val fact = fix (\ff. \n. if n == 0 then 1 else n * ff (n - 1));
+  fact(4)
+}

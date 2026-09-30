@@ -1,0 +1,19 @@
+with handler {
+  x => (x, "");
+  tell(s, k) => k(()) match { (x, acc) => (x, s ^ acc) }
+} handle {
+with handler {
+  x => \ s . (x, s) ;
+  get(x, k) => \s . k(?)(?) ;
+  put(v, k) => \s . k(?)(?)
+} handle { 
+  #tell("hello") ;
+  val x = #put(42);
+  #tell(", world!") ;
+  #get(())
+}
+
+(1)
+
+}
+// -->* (42, 42)

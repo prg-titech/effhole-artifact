@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            padding: 20px;
+            color: var(--vscode-foreground);
+            font-family: var(--vscode-font-family);
+            background-color: var(--vscode-editor-background);
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        /* 模拟 VS Code 原生按钮样式 */
+        .vscode-button {
+            background-color: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .vscode-button:hover {
+            background-color: var(--vscode-button-hoverBackground);
+        }
+        #output-area {
+            /* Define a fixed height or max-height */
+            max-height: 500px; 
+            overflow: auto; /* Adds scrollbar when content exceeds height */
+            
+            /* Visual styling for the box */
+            border: 1px solid var(--vscode-widget-border);
+            background-color: var(--vscode-input-background);
+            color: var(--vscode-input-foreground);
+            padding: 10px;
+            font-family: var(--vscode-editor-font-family);
+            font-size: var(--vscode-editor-font-size);
+        }
+        #output-area pre {
+            margin: 0;
+            white-space: pre-wrap; /* Wrap long lines */
+            font-family: var(--vscode-editor-font-family);
+            font-size: var(--vscode-editor-font-size);
+        }
+
+        #step-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 6px;
+        }
+
+        #step-indicator {
+            font-size: 13px;
+            opacity: 0.85;
+        }
+
+        .step-status {
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+        }
+
+        .step-status-warning {
+            color: var(--vscode-editorWarning-foreground);
+            border-color: var(--vscode-editorWarning-foreground);
+            background-color: var(--vscode-editor-findMatchHighlightBackground);
+        }
+
+        .step-status-error {
+            color: var(--vscode-editorError-foreground);
+            border-color: var(--vscode-editorError-foreground);
+            background-color: var(--vscode-inputValidation-errorBackground);
+        }
+
+        .step-error-panel {
+            border: 1px solid var(--vscode-editorError-foreground);
+            background-color: var(--vscode-inputValidation-errorBackground);
+            padding: 10px 12px;
+            border-radius: 4px;
+            margin-top: 4px;
+        }
+
+        .step-error-title {
+            color: var(--vscode-editorError-foreground);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .step-error-message {
+            color: var(--vscode-editorError-foreground);
+            font-family: var(--vscode-editor-font-family);
+            font-size: var(--vscode-editor-font-size);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        
+        /* Style for clickable words */
+        .interactive-word {
+            color: var(--vscode-textLink-foreground);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .interactive-word:hover {
+            color: var(--vscode-textLink-activeForeground);
+        }
+
+        .continuation-param {
+            color: var(--vscode-editorError-foreground);
+            background-color: var(--vscode-editorInfo-border);
+            border-radius: 2px;
+            padding: 0 1px;
+            font-weight: 600;
+        }
+
+        .step-focus {
+            color: var(--vscode-editorWarning-foreground);
+            background-color: var(--vscode-editor-findMatchHighlightBackground);
+            border-radius: 2px;
+            padding: 0 1px;
+        }
+
+        /* Table Styles */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+            font-family: var(--vscode-editor-font-family);
+            font-size: var(--vscode-editor-font-size);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+        th, td {
+            border: 1px solid var(--vscode-widget-border);
+            padding: 8px 12px;
+            text-align: left;
+            font-family: var(--vscode-editor-font-family);
+            font-size: var(--vscode-editor-font-size);
+        }
+        th {
+            background-color: var(--vscode-editor-lineHighlightBackground);
+            font-family: var(--vscode-editor-font-family);
+            font-size: var(--vscode-editor-font-size);
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--vscode-focusBorder);
+        }
+        tr {
+            background-color: var(--vscode-editor-background);
+        }
+        tr:nth-child(even) {
+            background-color: var(--vscode-input-background);
+        }
+        tr:hover {
+            background-color: var(--vscode-list-hoverBackground);
+        }
+        td pre {
+            margin: 0;
+            white-space: pre-wrap;
+            font-family: var(--vscode-editor-font-family);
+            font-size: var(--vscode-editor-font-size);
+        }
+
+        .hole-context-row {
+            transition: background-color 0.12s ease-in-out;
+        }
+
+        .hole-context-row:hover {
+            cursor: pointer;
+            background-color: var(--vscode-list-hoverBackground);
+            outline: 1px solid var(--vscode-focusBorder);
+            outline-offset: -1px;
+        }
+
+        .hole-context-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .hole-context-card {
+            border: 1px solid var(--vscode-widget-border);
+            border-radius: 8px;
+            padding: 12px;
+            background-color: var(--vscode-editor-background);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+            transition: border-color 0.12s ease-in-out, background-color 0.12s ease-in-out, box-shadow 0.12s ease-in-out;
+        }
+
+        .hole-context-card.is-hovered {
+            border-color: var(--vscode-focusBorder);
+            background-color: var(--vscode-list-hoverBackground);
+            box-shadow: 0 0 0 1px var(--vscode-focusBorder), 0 2px 10px rgba(0, 0, 0, 0.16);
+        }
+
+        .hole-context-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .hole-context-card table {
+            margin-top: 0;
+            box-shadow: none;
+        }
+
+        .hole-context-empty {
+            border: 1px dashed var(--vscode-widget-border);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--vscode-descriptionForeground);
+            background-color: var(--vscode-editor-background);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>EffHole Result</h2>
+        {{stepControls}}
+        {{stepErrorPanel}}
+        <div id="output-area">
+            <!-- DYNAMIC_CONTENT -->
+            {{content}}
+        </div>
+        <h2>Hole Contexts</h2>
+            <!-- DYNAMIC_CONTENT -->
+            {{content2}}
+
+        <!-- <p>Press the button to trigger TS code: </p>
+        <button class="vscode-button" id="msgBtn">send message to VS Code</button> -->
+        
+        <button id="normalizeBtn" class="vscode-button" style="display: none; position: absolute; z-index: 1000;">Normalize</button>
+    </div>
+
+    <script>
+        const vscode = acquireVsCodeApi();
+        const btn = document.getElementById('msgBtn');
+        const normalizeBtn = document.getElementById('normalizeBtn');
+        const prevStepBtn = document.getElementById('prevStepBtn');
+        const nextStepBtn = document.getElementById('nextStepBtn');
+
+        function readDefinitionFromRow(row) {
+            const startLine = Number(row.dataset.definitionStartLine);
+            const startColumn = Number(row.dataset.definitionStartColumn);
+            const endLine = Number(row.dataset.definitionEndLine);
+            const endColumn = Number(row.dataset.definitionEndColumn);
+            if (!Number.isFinite(startLine) || !Number.isFinite(startColumn) || !Number.isFinite(endLine) || !Number.isFinite(endColumn)) {
+                return undefined;
+            }
+            return {
+                start: { line: startLine, column: startColumn },
+                end: { line: endLine, column: endColumn }
+            };
+        }
+
+        function bindHoleContextHover() {
+            document.querySelectorAll('.hole-context-card').forEach((card) => {
+                card.addEventListener('mouseenter', () => {
+                    card.classList.add('is-hovered');
+                    const holeName = card.getAttribute('data-hole-name');
+                    if (holeName) {
+                        vscode.postMessage({
+                            command: 'holeCardHover',
+                            holeName
+                        });
+                    }
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.classList.remove('is-hovered');
+                    vscode.postMessage({ command: 'clearHoleCardHover' });
+                });
+            });
+
+            document.querySelectorAll('.hole-context-row').forEach((row) => {
+                row.addEventListener('mouseenter', () => {
+                    const definition = readDefinitionFromRow(row);
+                    if (definition) {
+                        vscode.postMessage({
+                            command: 'holeContextHover',
+                            definition
+                        });
+                    }
+                });
+                row.addEventListener('mouseleave', () => {
+                    vscode.postMessage({ command: 'clearHoleContextHover' });
+                });
+            });
+
+            document.addEventListener('mouseleave', () => {
+                vscode.postMessage({ command: 'clearHoleContextHover' });
+                vscode.postMessage({ command: 'clearHoleCardHover' });
+            });
+        }
+
+        bindHoleContextHover();
+
+        // Delegate click events for dynamic content
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('interactive-word')) {
+                const word = e.target.getAttribute('data-word');
+                vscode.postMessage({
+                    command: 'wordClicked',
+                    text: word
+                });
+            }
+        });
+
+        if (btn) {
+            btn.addEventListener('click', () => {
+                vscode.postMessage({
+                    command: 'showAlert',
+                    text: 'Hello from HTML! 🚀'
+                });
+            });
+        }
+
+        if (prevStepBtn) {
+            prevStepBtn.addEventListener('click', () => {
+                vscode.postMessage({ command: 'prevStep' });
+            });
+        }
+
+        if (nextStepBtn) {
+            nextStepBtn.addEventListener('click', () => {
+                vscode.postMessage({ command: 'nextStep' });
+            });
+        }
+
+        // Handle text selection
+        document.addEventListener('selectionchange', () => {
+            const selection = window.getSelection();
+            if (selection.toString().length > 0) {
+                // Check if selection is inside container or specific areas if needed
+                // For now, allow selection anywhere
+                const range = selection.getRangeAt(0);
+                const rect = range.getBoundingClientRect();
+                
+                normalizeBtn.style.display = 'block';
+                // Adjust position relative to viewport + scroll
+                normalizeBtn.style.top = `${window.scrollY + rect.bottom + 5}px`;
+                normalizeBtn.style.left = `${window.scrollX + rect.left}px`;
+            } else {
+                normalizeBtn.style.display = 'none';
+            }
+        });
+
+        // Handle normalize button click
+        if (normalizeBtn) {
+            normalizeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const selection = window.getSelection().toString();
+                if (selection) {
+                    vscode.postMessage({
+                        command: 'normalizeSelection',
+                        text: selection
+                    });
+                     // Hide button after click
+                     normalizeBtn.style.display = 'none';
+                     // Clear selection? Maybe not.
+                }
+            });
+            
+            // Prevent button click from clearing selection (mousedown behavior)
+             normalizeBtn.addEventListener('mousedown', (e) => {
+                e.preventDefault(); // This is crucial to prevent focus loss/selection clear
+            });
+        }
+    </script>
+</body>
+</html>

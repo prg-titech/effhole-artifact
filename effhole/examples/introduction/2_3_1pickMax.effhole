@@ -1,0 +1,20 @@
+{
+
+  // choose from x, y
+  val choose = \x y. if #decide(()) then x else y;
+
+  // pick the maximal result
+  val pickMax = handler { 
+                x => x; 
+                decide(x, k) => {
+                  val xt = k(True);
+                  val xf = k(False);
+                  if xt > xf then xt else xf
+                }
+              };
+
+  with pickMax handle {
+    choose(15)(30) - choose(5)(10)
+  }
+  
+}

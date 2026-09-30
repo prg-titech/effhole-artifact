@@ -1,0 +1,10 @@
+{
+  def traverse (f) (xs) = xs match {
+    [] => ();
+    x :: xs => { f(x); traverse(f)(xs) }
+  };
+
+  val f = \x. #print(?);
+
+  traverse(f)(1 :: 2 :: [])
+}

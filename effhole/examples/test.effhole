@@ -1,0 +1,7 @@
+1 + with handler {
+  x => x;
+  op(x, k) => k (())
+}
+handle { 
+  if ? then 1 else 2
+}

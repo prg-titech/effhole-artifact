@@ -1,0 +1,10 @@
+with handler {
+  x => \s. (x, s);
+  get(x, k) => \s. k(s)(s);
+  put(v, k) => \s. k(())(v)
+} handle {
+    val x = #put(42);
+    #get(())
+}
+
+(1)

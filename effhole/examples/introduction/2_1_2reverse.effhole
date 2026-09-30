@@ -1,0 +1,17 @@
+with handler {
+  x => (x, "");
+  print(s, k) => k(()) match { (x, acc) => (x, s ^ acc) }
+} handle {
+
+//  ^ the default print handler 
+
+with handler {
+  x => x;
+  print(s, k) => { k(()); #print(s) }
+} handle {
+    #print("A");
+    #print("B");
+    #print("C")
+}
+
+}

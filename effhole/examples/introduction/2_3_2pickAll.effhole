@@ -1,0 +1,29 @@
+{
+
+  // choose from m to n
+  def chooseInt(m)(n) = 
+    if m > n then #fail(()) 
+    else (if #decide(()) then m else chooseInt(m + 1)(n));
+
+  // concatenate lists
+  def concat(xs)(ys) = xs match {
+    [] => ys;
+    x :: xs => x :: concat(xs)(ys)
+  };
+
+  val sum5 = \m n. {
+      val a = chooseInt(m)(n - 1);
+      val b = chooseInt(a + 1)(n);
+      if a + b == 5 then (a, b) else #fail(())   
+    };
+
+  // pick all the possible results
+  val pickAll = handler { 
+                x => x :: []; 
+                decide(x, k) => concat(k(True))(k(False));
+                fail(x, k) => []
+              };
+
+  with pickAll handle { sum5(1)(5) }
+  
+}

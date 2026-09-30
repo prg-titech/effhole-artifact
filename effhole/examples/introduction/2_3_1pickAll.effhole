@@ -1,0 +1,22 @@
+{
+
+  // choose from x, y
+  val choose = \x y. if #decide(()) then x else y;
+
+  // concatenate lists
+  def concat(xs)(ys) = xs match {
+    [] => ys;
+    x :: xs => x :: concat(xs)(ys)
+  };
+
+  // pick all the results
+  val pickAll = handler { 
+                x => x :: []; 
+                decide(x, k) => ? (k(True)) (k(False))
+              };
+
+  with pickAll handle {
+    choose(15)(30) - choose(5)(10)
+  }
+  
+}

@@ -1,0 +1,143 @@
+{
+  "name": "effhole",
+  "displayName": "EffHole",
+  "description": "The vscode extension of effhole",
+  "version": "0.0.5-new",
+  "publisher": "Frankenstein",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prg-titech/Effhole"
+  },
+  "engines": {
+    "vscode": "^1.108.1"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "effhole.run",
+        "title": "Run effhole"
+      },
+      {
+        "command": "effhole.runWithKeys",
+        "title": "Run effhole (Shortcut)"
+      },
+      {
+        "command": "effhole.toggleRunModeEvalTitle",
+        "title": "Eval"
+      },
+      {
+        "command": "effhole.toggleRunModeNormTitle",
+        "title": "Simp"
+      },
+      {
+        "command": "effhole.normalizeSelection",
+        "title": "Normalize Expression"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "effhole.runWithKeys",
+        "key": "f5",
+        "mac": "f5",
+        "when": "editorTextFocus && resourceExtname == .effhole"
+      }
+    ],
+    "languages": [
+      {
+        "id": "effhole",
+        "extensions": [".effhole"],
+        "aliases": ["EffHole", "effhole"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "effhole",
+        "scopeName": "source.effhole",
+        "path": "./syntaxes/effhole.tmLanguage.json"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "effhole.run",
+          "when": "resourceExtname == .effhole",
+          "group": "navigation@1"
+        },
+        {
+          "command": "effhole.toggleRunModeEvalTitle",
+          "when": "resourceExtname == .effhole && effhole.runMode == eval",
+          "group": "navigation@2"
+        },
+        {
+          "command": "effhole.toggleRunModeNormTitle",
+          "when": "resourceExtname == .effhole && effhole.runMode == norm",
+          "group": "navigation@2"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "EffHole",
+      "properties": {
+        "effhole.userName": {
+          "type": "string",
+          "default": "guest",
+          "description": "User name"
+        },
+        "effhole.step": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable step-by-step execution mode."
+        },
+        "effhole.fuel": {
+          "type": "number",
+          "default": 1000,
+          "minimum": 1,
+          "maximum": 2000,
+          "description": "Fuel used for evaluation/normalization requests (eval, evalStep, norm, normStep)."
+        },
+        "effhole.serverUrl": {
+          "type": "string",
+          "default": "http://127.0.0.1:8081",
+          "description": "EffHole backend HTTP server base URL."
+        },
+        "effhole.requestTimeoutMs": {
+          "type": "number",
+          "default": 10000,
+          "minimum": 100,
+          "description": "HTTP request timeout in milliseconds when calling the EffHole backend."
+        },
+        "effhole.holeContextWindowSize": {
+          "type": "number",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 50,
+          "description": "Maximum number of hole contexts kept visible in the webview queue. Older entries are removed when the limit is exceeded."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.108.1",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "typescript-eslint": "^8.52.0",
+    "eslint": "^9.39.2",
+    "typescript": "^5.9.3",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}

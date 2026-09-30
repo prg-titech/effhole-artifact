@@ -1,0 +1,13 @@
+{
+
+  // choose from x, y
+  val choose = \x.\y. if #decide(()) then x else y;
+
+  // always pick True
+  val pickTrue = handler { x => x; decide(x, k) => k(True) };
+
+  with pickTrue handle {
+    choose(15)(30) - choose(5)(10)
+  }
+  
+}

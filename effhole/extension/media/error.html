@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            padding: 20px;
+            color: var(--vscode-foreground);
+            font-family: var(--vscode-font-family);
+            background-color: var(--vscode-editor-background);
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .error-box {
+            border: 1px solid var(--vscode-errorForeground);
+            background-color: var(--vscode-input-background);
+            color: var(--vscode-errorForeground);
+            padding: 15px;
+            font-family: var(--vscode-editor-font-family);
+            font-size: var(--vscode-editor-font-size);
+            white-space: pre-wrap;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        h2 {
+            color: var(--vscode-errorForeground);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 0;
+        }
+        .icon {
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2><span class="icon">⚠️</span> {{errorTitle}}</h2>
+        <div class="error-box">{{errorMessage}}</div>
+    </div>
+</body>
+</html>

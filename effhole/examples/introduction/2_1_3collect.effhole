@@ -1,0 +1,20 @@
+with handler {
+  x => \acc . (x, acc);
+  print(s, k) => \acc . k(()) (acc ^ s)
+} handle {
+
+//  ^ parameter-passing print handler 
+
+with handler {
+  x => x;
+  print(s, k) => { k(()); #print(s) }
+} handle {
+    #print("A");
+    #print("B");
+    #print("C")
+  
+}
+
+}
+
+("")

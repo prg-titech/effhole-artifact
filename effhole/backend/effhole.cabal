@@ -1,0 +1,132 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.39.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           effhole
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/prg-titech/Effhole#readme>
+homepage:       https://github.com/prg-titech/Effhole#readme
+bug-reports:    https://github.com/prg-titech/Effhole/issues
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2025 Author name here
+license:        BSD-3-Clause
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/prg-titech/Effhole
+
+library
+  exposed-modules:
+      CLI
+      Common
+      Elaboration
+      External
+      Internal
+      Internal.Eval
+      Internal.Norm
+      Internal.Pretty
+      Internal.Syntax
+      Parser
+      Server
+      Type
+  other-modules:
+      Paths_effhole
+  autogen-modules:
+      Paths_effhole
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , bound
+    , bytestring
+    , containers
+    , deriving-compat
+    , haskeline
+    , hspec
+    , hspec-megaparsec
+    , http-types
+    , megaparsec
+    , mtl
+    , optparse-applicative
+    , parser-combinators
+    , prettyprinter
+    , text
+    , wai
+    , warp
+  default-language: Haskell2010
+
+executable effhole-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_effhole
+  autogen-modules:
+      Paths_effhole
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , bound
+    , bytestring
+    , containers
+    , deriving-compat
+    , effhole
+    , haskeline
+    , hspec
+    , hspec-megaparsec
+    , http-types
+    , megaparsec
+    , mtl
+    , optparse-applicative
+    , parser-combinators
+    , prettyprinter
+    , text
+    , wai
+    , warp
+  default-language: Haskell2010
+
+test-suite effhole-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      ExternalTests
+      InternalTests
+      ParserTests
+      Paths_effhole
+  autogen-modules:
+      Paths_effhole
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , bound
+    , bytestring
+    , containers
+    , deriving-compat
+    , effhole
+    , haskeline
+    , hspec
+    , hspec-megaparsec
+    , http-types
+    , megaparsec
+    , mtl
+    , optparse-applicative
+    , parser-combinators
+    , prettyprinter
+    , text
+    , wai
+    , warp
+  default-language: Haskell2010
